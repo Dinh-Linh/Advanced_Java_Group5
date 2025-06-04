@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ComboRepository extends JpaRepository<Combo, Integer> {
+public interface ComboRepository extends JpaRepository<Combo, Long> {
 
     // Lấy combo theo status
     Page<Combo> findByStatus(String status, Pageable pageable);
