@@ -3,30 +3,32 @@ package com.example.advanced_java_group5.services;
 
 import com.example.advanced_java_group5.models.entities.User;
 import com.example.advanced_java_group5.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public User authenticate(String email, String password) throws SQLException {
+    public User authenticate(String email, String password) {
         User user = userRepository.findByEmail(email);
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return user;
+        if (user == null) {
+            return null;
         }
-        return null;
-    }
-
-    public User findByEmail(String email) throws SQLException {
-        return userRepository.findByEmail(email);
+        boolean isPasswordCorrect = passwordEncoder.matches(password, user.getPassword());
+        boolean isAdmin = "admin".equals(user.getRole());
+        if (!isAdmin || !isPasswordCorrect) {
+            return null;
+        }
+        return user;
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     // Tìm user theo email
     User findByEmail(String email);
@@ -17,11 +17,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // Kiểm tra email tồn tại, ngoại trừ user có ID chỉ định
     @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email AND u.id != :id")
-    boolean checkEmailExist(@Param("email") String email, @Param("id") int id);
+    boolean checkEmailExist(@Param("email") String email, @Param("id") Long id);
 
     // Kiểm tra phone tồn tại, ngoại trừ user có ID chỉ định
     @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.phone = :phone AND u.id != :id")
-    boolean checkPhoneExist(@Param("phone") String phone, @Param("id") int id);
+    boolean checkPhoneExist(@Param("phone") String phone, @Param("id") Long id);
 
     // Tìm user theo tên, email, hoặc phone với phân trang
     @Query("SELECT u FROM User u WHERE u.name LIKE %:keyword% OR u.email LIKE %:keyword% OR u.phone LIKE %:keyword%")
