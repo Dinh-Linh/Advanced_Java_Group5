@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 
-public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
     // Lấy reservation theo customerId
     Page<Reservation> findByCustomerId(int customerId, Pageable pageable);

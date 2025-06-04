@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface FoodRepository extends JpaRepository<Food, Integer> {
+public interface FoodRepository extends JpaRepository<Food, Long> {
 
     // Lấy food theo mealType
     Page<Food> findByMealType(String mealType, Pageable pageable);
