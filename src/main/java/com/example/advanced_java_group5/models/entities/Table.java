@@ -1,7 +1,6 @@
 package com.example.advanced_java_group5.models.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -13,12 +12,16 @@ import lombok.Setter;
 @RequiredArgsConstructor
 public class Table {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private Integer capacity;
 
+    @Column(nullable = false)
     private String status;
 
     private String location;
