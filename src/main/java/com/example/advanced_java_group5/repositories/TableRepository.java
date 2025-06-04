@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface TableRepository extends JpaRepository<Table, Integer> {
+public interface TableRepository extends JpaRepository<Table, Long> {
 
     // Lấy table theo status
     Page<Table> findByStatus(String status, Pageable pageable);
