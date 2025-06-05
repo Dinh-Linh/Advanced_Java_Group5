@@ -56,7 +56,6 @@ public class ReviewService {
             review.setContent(content.trim());
             review.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             reviewRepository.save(review);
-
             return true;
         } catch (Exception e) {
             e.printStackTrace();
