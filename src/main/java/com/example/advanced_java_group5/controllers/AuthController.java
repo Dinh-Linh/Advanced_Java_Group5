@@ -26,8 +26,10 @@ public class AuthController {
         if (error != null) {
             if ("unauthorized".equals(error)) {
                 model.addAttribute("error", "Có ai đó đã thay đổi dữ liệu tài khoản của bạn. Vui lòng đăng nhập lại");
+                System.out.println(error);
             } else {
                 model.addAttribute("error", "Email hoặc mật khẩu không đúng");
+                System.out.println(error);
             }
         }
         if (logout != null) {

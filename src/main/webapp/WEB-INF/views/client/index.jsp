@@ -84,7 +84,7 @@
         >
           <!-- Uncomment the line below if you also wish to use an image logo -->
           <!-- <img src="assets/img/logo.png" alt=""> -->
-          <h1 class="sitename">MyHanhSeaFood</h1>
+          <h1 class="sitename">YUMMY</h1>
           <span>.</span>
         </a>
 
