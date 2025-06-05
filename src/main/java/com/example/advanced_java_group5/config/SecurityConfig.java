@@ -5,6 +5,10 @@ import com.example.advanced_java_group5.models.entities.User;
 import com.example.advanced_java_group5.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,8 +43,17 @@ public class SecurityConfig {
                         .loginPage("/admin/login")
                         .loginProcessingUrl("/admin/login")
                         .usernameParameter("email")
+                        .passwordParameter("password")
                         .defaultSuccessUrl("/admin", true)
                         .failureUrl("/admin/login?error=true")
+                        .successHandler((request, response, authentication) -> {
+                            System.out.println("Đăng nhập thành công: Email=" + authentication.getName() + ", Roles=" + authentication.getAuthorities());
+                            response.sendRedirect("/admin");
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            System.out.println("Đăng nhập thất bại: " + exception.getMessage());
+                            response.sendRedirect("/admin/login?error=true");
+                        })
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -66,14 +79,17 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
+            System.out.println("UserDetailsService: Tìm kiếm email: " + username);
             User user = userService.getUserByEmail(username);
             if (user == null) {
+                System.out.println("UserDetailsService: Không tìm thấy user với email: " + username);
                 throw new UsernameNotFoundException("User not found: " + username);
             }
+            System.out.println("UserDetailsService: Tìm thấy user: " + user.getEmail() + ", role: " + user.getRole());
             return org.springframework.security.core.userdetails.User
                     .withUsername(user.getEmail())
                     .password(user.getPassword())
-                    .roles(user.getRole().toUpperCase())
+                    .roles(user.getRole().replace("ROLE_", "").toUpperCase())
                     .build();
         };
     }
@@ -82,4 +98,20 @@ public class SecurityConfig {
     public AdminAuthFilter adminAuthFilter() {
         return new AdminAuthFilter(userService);
     }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authBuilder.authenticationProvider(authenticationProvider());
+        return authBuilder.build();
+    }
+
 }

@@ -29,9 +29,6 @@ public class AdminAuthFilter extends OncePerRequestFilter {
 
         // Bỏ qua các URL công khai và tài nguyên tĩnh
         if (requestURI.equals(loginURI) ||
-                requestURI.startsWith(contextPath + "/css/") ||
-                requestURI.startsWith(contextPath + "/js/") ||
-                requestURI.startsWith(contextPath + "/img/") ||
                 requestURI.startsWith(contextPath + "/resources/") ||
                 requestURI.equals(contextPath + "/admin/logout") ||
                 requestURI.equals(contextPath + "/error") ||
@@ -46,16 +43,21 @@ public class AdminAuthFilter extends OncePerRequestFilter {
             String email = authentication.getName();
             try {
                 User dbUser = userService.getUserByEmail(email);
-                if (dbUser != null && "admin".equalsIgnoreCase(dbUser.getRole())) {
+                System.out.println(dbUser);
+                if (dbUser != null && "ROLE_ADMIN".equalsIgnoreCase(dbUser.getRole())) {
                     filterChain.doFilter(request, response);
                     return;
                 }
             } catch (Exception e) {
-                // Log error if needed
+                System.err.println("Error in AdminAuthFilter: " + e.getMessage());
+                e.printStackTrace();
             }
         }
 
         // Nếu không phải admin, chuyển hướng về trang login
         response.sendRedirect(loginURI + "?error=unauthorized");
     }
+
 }
+
+
