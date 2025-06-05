@@ -32,6 +32,7 @@ public class AdminAuthFilter extends OncePerRequestFilter {
                 requestURI.startsWith(contextPath + "/css/") ||
                 requestURI.startsWith(contextPath + "/js/") ||
                 requestURI.startsWith(contextPath + "/img/") ||
+                requestURI.startsWith(contextPath + "/resources/") ||
                 requestURI.equals(contextPath + "/admin/logout") ||
                 requestURI.equals(contextPath + "/error") ||
                 requestURI.equals(contextPath + "/home")) {
