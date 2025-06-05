@@ -1,10 +1,11 @@
 package com.example.advanced_java_group5.services;
+
 import com.example.advanced_java_group5.models.entities.Reservation;
 import com.example.advanced_java_group5.models.entities.User;
 import com.example.advanced_java_group5.repositories.ReservationRepository;
 import com.example.advanced_java_group5.repositories.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

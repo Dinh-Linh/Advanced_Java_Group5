@@ -1,4 +1,5 @@
 package com.example.advanced_java_group5.repositories;
+
 import com.example.advanced_java_group5.models.entities.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,4 +60,24 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     // Lấy comboId theo tên
     @Query("SELECT c.id FROM Combo c WHERE c.name = :comboName")
     Integer getComboIdByName(@Param("comboName") String comboName);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.status = :status")
+    long countByStatus(@Param("status") String status);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.id = :userId")
+    long countByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.id = :userId AND r.status = :status")
+    long countByUserIdAndStatus(@Param("userId") Long userId, @Param("status") String status);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.table.id = :tableId")
+    long countByTableId(@Param("tableId") Long tableId);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.table.id = :tableId AND r.status = :status")
+    long countByTableIdAndStatus(@Param("tableId") Long tableId, @Param("status") String status);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO reservation (user_id, reservation_date_time, number_of_people, note, total) VALUES (:userId, :reservationDateTime, :numberOfPeople, :note, :total)", nativeQuery = true)
+    int createReservation(@Param("userId") Long userId, @Param("reservationDateTime") Timestamp reservationDateTime, @Param("numberOfPeople") int numberOfPeople, @Param("note") String note, @Param("total") double total);
 }
