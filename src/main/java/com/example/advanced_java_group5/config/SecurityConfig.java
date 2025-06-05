@@ -42,7 +42,8 @@ public class SecurityConfig {
                         .maximumSessions(1)
                         .expiredUrl("/admin/login?expired=true")
                         .maxSessionsPreventsLogin(true)
-                );
+                )
+                .csrf(csrf -> csrf.disable());
         return http.build();
     }
 

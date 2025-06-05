@@ -78,17 +78,17 @@ public class FoodService {
         return foodRepository.findByStatusAndMealType(status, mealType, PageRequest.of(page - 1, itemsPerPage));
     }
 
-    public long getFoodCountByStatusAndMealType(String status, String mealType) {
-        return foodRepository.countByStatusAndMealType(status, mealType);
-    }
+//    public long getFoodCountByStatusAndMealType(String status, String mealType) {
+//        return foodRepository.countByStatusAndMealType(status, mealType);
+//    }
 
     public Page<Food> getFoodsByMealType(int page, int itemsPerPage, String mealType) {
         return foodRepository.findByMealType(mealType, PageRequest.of(page - 1, itemsPerPage));
     }
 
-    public long getFoodCountByMealType(String mealType) {
-        return foodRepository.countByMealType(mealType);
-    }
+//    public long getFoodCountByMealType(String mealType) {
+//        return foodRepository.countByMealType(mealType);
+//    }
 
     public Page<Food> findByKeyword(String keyword, int page, int itemsPerPage) {
         return foodRepository.findByKeyword(keyword, PageRequest.of(page - 1, itemsPerPage));

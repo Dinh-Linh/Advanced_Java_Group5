@@ -18,4 +18,13 @@ public interface TableRepository extends JpaRepository<Table, Long> {
     // Tìm table theo từ khóa và status
     @Query("SELECT t FROM Table t WHERE (t.name LIKE %:keyword% OR t.location LIKE %:keyword%) AND t.status = :status")
     Page<Table> findByKeywordAndStatus(@Param("keyword") String keyword, @Param("status") String status, Pageable pageable);
+
+    @Query("SELECT COUNT(t) FROM Table t WHERE t.status = :status")
+    long countByStatus(@Param("status") String status);
+
+    @Query("SELECT COUNT(t) FROM Table t WHERE t.name LIKE %:keyword% OR t.location LIKE %:keyword%")
+    long countByNameContainingOrLocationContaining(@Param("keyword") String keyword1, @Param("keyword") String keyword2);
+
+    @Query("SELECT COUNT(t) FROM Table t WHERE (t.name LIKE %:keyword% OR t.location LIKE %:keyword%) AND t.status = :status")
+    long countByNameContainingOrLocationContainingAndStatus(@Param("keyword") String keyword1, @Param("keyword") String keyword2, @Param("status") String status);
 }

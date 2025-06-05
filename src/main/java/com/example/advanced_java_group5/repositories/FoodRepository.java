@@ -40,4 +40,19 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
     // Lấy 6 food theo mealType
     @Query("SELECT f FROM Food f WHERE f.status = 'available' AND f.mealType = :mealType ORDER BY f.id ASC")
     Page<Food> find6FoodsByMealType(@Param("mealType") String mealType, Pageable pageable);
+
+    @Query("SELECT COUNT(f) FROM Food f WHERE f.status = :status")
+    long countByStatus(@Param("status") String status);
+
+    @Query("SELECT COUNT(f) FROM Food f WHERE f.name LIKE %:keyword%")
+    long countByNameContaining(@Param("keyword") String keyword);
+
+    @Query("SELECT COUNT(f) FROM Food f WHERE f.name LIKE %:keyword% AND f.status = :status")
+    long countByNameContainingAndStatus(@Param("keyword") String keyword, @Param("status") String status);
+
+    @Query("SELECT COUNT(f) FROM Food f WHERE f.name LIKE %:keyword% AND f.mealType = :mealType")
+    long countByNameContainingAndMealType(@Param("keyword") String keyword, @Param("mealType") String mealType);
+
+    @Query("SELECT COUNT(f) FROM Food f WHERE f.name LIKE %:keyword% AND f.status = :status AND f.mealType = :mealType")
+    long countByNameContainingAndStatusAndMealType(@Param("keyword") String keyword, @Param("status") String status, @Param("mealType") String mealType);
 }
