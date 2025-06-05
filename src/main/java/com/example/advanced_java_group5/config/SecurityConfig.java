@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .loginPage("/admin/login")
                         .loginProcessingUrl("/admin/login")
                         .usernameParameter("email")
+                        .passwordParameter("password")
                         .defaultSuccessUrl("/admin", true)
                         .failureUrl("/admin/login?error=true")
                         .permitAll()
@@ -82,4 +83,10 @@ public class SecurityConfig {
     public AdminAuthFilter adminAuthFilter() {
         return new AdminAuthFilter(userService);
     }
+
+//    public static void main(String[] args) {
+//        String pw = "abc123!@#";
+//        System.out.println(new BCryptPasswordEncoder(pw.length()));
+//    }
+
 }

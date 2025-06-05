@@ -29,9 +29,6 @@ public class AdminAuthFilter extends OncePerRequestFilter {
 
         // Bỏ qua các URL công khai và tài nguyên tĩnh
         if (requestURI.equals(loginURI) ||
-                requestURI.startsWith(contextPath + "/css/") ||
-                requestURI.startsWith(contextPath + "/js/") ||
-                requestURI.startsWith(contextPath + "/img/") ||
                 requestURI.startsWith(contextPath + "/resources/") ||
                 requestURI.equals(contextPath + "/admin/logout") ||
                 requestURI.equals(contextPath + "/error") ||
@@ -58,4 +55,7 @@ public class AdminAuthFilter extends OncePerRequestFilter {
         // Nếu không phải admin, chuyển hướng về trang login
         response.sendRedirect(loginURI + "?error=unauthorized");
     }
+
 }
+
+

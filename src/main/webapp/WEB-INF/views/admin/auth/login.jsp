@@ -50,7 +50,7 @@
                                     </div>
                                 </c:if>
                                 <form
-                                        action="${pageContext.request.contextPath}/admin/login"
+                                        action="/admin/login"
                                         method="post"
                                 >
                                     <div class="form-floating mb-3">
