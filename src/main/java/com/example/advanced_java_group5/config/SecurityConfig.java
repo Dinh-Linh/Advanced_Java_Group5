@@ -30,9 +30,10 @@ public class SecurityConfig {
         http
                 .addFilterBefore(adminAuthFilter(), SessionManagementFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/admin/login", "/admin/logout", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/home", "/resources/**", "/css/**", "/js/**", "/img/**", "/vendor/**", "/error").permitAll()
+                        .requestMatchers("/admin/login", "/admin/logout").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .loginPage("/admin/login")
@@ -51,9 +52,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .maximumSessions(1)
                         .expiredUrl("/admin/login?expired=true")
-                        .maxSessionsPreventsLogin(true)
                 )
-                .csrf(csrf -> csrf.disable()); // Tạm thời tắt CSRF, bật lại nếu cần
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
@@ -73,7 +73,7 @@ public class SecurityConfig {
             return org.springframework.security.core.userdetails.User
                     .withUsername(user.getEmail())
                     .password(user.getPassword())
-                    .roles(user.getRole().toUpperCase()) // Ensure ROLE_ADMIN
+                    .roles(user.getRole().toUpperCase())
                     .build();
         };
     }

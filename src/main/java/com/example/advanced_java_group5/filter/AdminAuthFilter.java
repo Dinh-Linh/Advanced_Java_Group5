@@ -12,7 +12,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-
 public class AdminAuthFilter extends OncePerRequestFilter {
 
     private final UserService userService;
@@ -32,31 +31,30 @@ public class AdminAuthFilter extends OncePerRequestFilter {
         if (requestURI.equals(loginURI) ||
                 requestURI.startsWith(contextPath + "/css/") ||
                 requestURI.startsWith(contextPath + "/js/") ||
-                requestURI.startsWith(contextPath + "/images/") ||
-                requestURI.equals(contextPath + "/admin/logout")) {
+                requestURI.startsWith(contextPath + "/img/") ||
+                requestURI.equals(contextPath + "/admin/logout") ||
+                requestURI.equals(contextPath + "/error") ||
+                requestURI.equals(contextPath + "/home")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         // Kiểm tra xác thực qua SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean isLoggedIn = false;
-
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
             String email = authentication.getName();
             try {
                 User dbUser = userService.getUserByEmail(email);
-                isLoggedIn = dbUser != null && "admin".equalsIgnoreCase(dbUser.getRole());
+                if (dbUser != null && "admin".equalsIgnoreCase(dbUser.getRole())) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
             } catch (Exception e) {
-                isLoggedIn = false;
+                // Log error if needed
             }
         }
 
-        if (isLoggedIn) {
-            filterChain.doFilter(request, response);
-        } else {
-            // Không invalidate session, để Spring Security xử lý
-            response.sendRedirect(loginURI + "?error=unauthorized");
-        }
+        // Nếu không phải admin, chuyển hướng về trang login
+        response.sendRedirect(loginURI + "?error=unauthorized");
     }
 }

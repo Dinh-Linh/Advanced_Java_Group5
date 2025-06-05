@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
-<%@ page import="org.datban.webjava.models.Food" %>
+<%@ page import="com.example.advanced_java_group5.models.entities.Food" %>
 
 <div class="container">
   <ul class="nav nav-tabs d-flex justify-content-center" data-aos="fade-up" data-aos-delay="100">
