@@ -6,7 +6,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -22,42 +23,39 @@ public class AdminAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String loginURI = request.getContextPath() + "/admin/login";
-        boolean isLoginRequest = request.getRequestURI().equals(loginURI);
+        String requestURI = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String loginURI = contextPath + "/admin/login";
 
-        if (isLoginRequest) {
+        // Bỏ qua các URL công khai và tài nguyên tĩnh
+        if (requestURI.equals(loginURI) ||
+                requestURI.startsWith(contextPath + "/css/") ||
+                requestURI.startsWith(contextPath + "/js/") ||
+                requestURI.startsWith(contextPath + "/img/") ||
+                requestURI.startsWith(contextPath + "/resources/") ||
+                requestURI.equals(contextPath + "/admin/logout") ||
+                requestURI.equals(contextPath + "/error") ||
+                requestURI.equals(contextPath + "/home")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        HttpSession session = request.getSession(false);
-        User sessionUser = null;
-        if (session != null) {
-            sessionUser = (User) session.getAttribute("adminUser");
-        }
-
-        User dbUser = null;
-        if (sessionUser != null) {
+        // Kiểm tra xác thực qua SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
+            String email = authentication.getName();
             try {
-                dbUser = userService.getUserByEmail(sessionUser.getEmail());
+                User dbUser = userService.getUserByEmail(email);
+                if (dbUser != null && "admin".equalsIgnoreCase(dbUser.getRole())) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
             } catch (Exception e) {
-                dbUser = null;
+                // Log error if needed
             }
         }
 
-        boolean isLoggedIn = dbUser != null && "ADMIN".equals(dbUser.getRole());
-
-        if (isLoggedIn) {
-            filterChain.doFilter(request, response);
-        } else {
-            if (session != null) {
-                session.invalidate();
-            }
-            HttpSession newSession = request.getSession(true);
-            newSession.setAttribute("error", "Có ai đó đã thay đổi dữ liệu tài khoản của bạn. Vui lòng đăng nhập lại");
-            response.sendRedirect(loginURI);
-        }
+        // Nếu không phải admin, chuyển hướng về trang login
+        response.sendRedirect(loginURI + "?error=unauthorized");
     }
-
-
 }
