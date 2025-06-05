@@ -4,7 +4,7 @@ package com.example.advanced_java_group5.services;
 import com.example.advanced_java_group5.models.entities.User;
 import com.example.advanced_java_group5.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +14,7 @@ public class AuthService {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     public User authenticate(String email, String password) {
         User user = userRepository.findByEmail(email);

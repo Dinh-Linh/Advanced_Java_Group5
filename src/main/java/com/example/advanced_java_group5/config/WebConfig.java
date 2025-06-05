@@ -2,7 +2,6 @@ package com.example.advanced_java_group5.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -14,7 +13,7 @@ import org.springframework.web.servlet.view.JstlView;
 public class WebConfig implements WebMvcConfigurer {
 
     @Bean
-    public ViewResolver viewResolver() {
+    public InternalResourceViewResolver viewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
         resolver.setPrefix("/WEB-INF/views/");
@@ -24,28 +23,20 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Ánh xạ các tài nguyên tĩnh từ webapp/resources/
         registry.addResourceHandler("/resources/**")
-                .addResourceLocations("/resources/")
-                .setCachePeriod(3600); // Cache 1 hour
+                .addResourceLocations("/resources/");
 
         registry.addResourceHandler("/css/**")
-                .addResourceLocations("/resources/css/")
-                .setCachePeriod(3600);
+                .addResourceLocations("/resources/css/");
 
         registry.addResourceHandler("/js/**")
-                .addResourceLocations("/resources/js/")
-                .setCachePeriod(3600);
+                .addResourceLocations("/resources/js/");
 
         registry.addResourceHandler("/img/**")
-                .addResourceLocations("/resources/img/")
-                .setCachePeriod(3600);
+                .addResourceLocations("/resources/img/");
 
         registry.addResourceHandler("/vendor/**")
-                .addResourceLocations("/resources/vendor/")
-                .setCachePeriod(3600);
-
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/")
-                .setCachePeriod(3600);
+                .addResourceLocations("/resources/vendor/");
     }
 }
