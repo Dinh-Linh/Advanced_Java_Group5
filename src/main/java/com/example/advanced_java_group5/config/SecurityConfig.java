@@ -2,7 +2,6 @@ package com.example.advanced_java_group5.config;
 
 import com.example.advanced_java_group5.filter.AdminAuthFilter;
 import com.example.advanced_java_group5.models.entities.User;
-import com.example.advanced_java_group5.services.AuthService;
 import com.example.advanced_java_group5.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,30 +18,42 @@ import org.springframework.security.web.session.SessionManagementFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private AuthService authService;
-    private UserService userService;
+
+    private final UserService userService;
+
+    public SecurityConfig(UserService userService) {
+        this.userService = userService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .addFilterBefore(customAdminAuthFilter(),
-                        SessionManagementFilter.class)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/login", "/admin/logout").permitAll()
+                .addFilterBefore(adminAuthFilter(), SessionManagementFilter.class)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/admin/login", "/admin/logout", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/admin/login")
-                        .defaultSuccessUrl("/admin")
+                        .loginProcessingUrl("/admin/login")
+                        .usernameParameter("email")
+                        .defaultSuccessUrl("/admin", true)
+                        .failureUrl("/admin/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/admin/logout")
-                        .logoutSuccessUrl("/admin/login?logout")
+                        .logoutSuccessUrl("/admin/login?logout=true")
                         .addLogoutHandler(new SecurityContextLogoutHandler())
                         .permitAll()
-                );
+                )
+                .sessionManagement(session -> session
+                        .maximumSessions(1)
+                        .expiredUrl("/admin/login?expired=true")
+                        .maxSessionsPreventsLogin(true)
+                )
+                .csrf(csrf -> csrf.disable()); // Tạm thời tắt CSRF, bật lại nếu cần
 
         return http.build();
     }
@@ -53,26 +64,22 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(AuthService authService) {
+    public UserDetailsService userDetailsService() {
         return username -> {
-            try {
-                User user = authService.findByEmail(username);
-                if (user == null) {
-                    throw new UsernameNotFoundException("User not found: " + username);
-                }
-                return org.springframework.security.core.userdetails.User
-                        .withUsername(user.getEmail())
-                        .password(user.getPassword())
-                        .roles(user.getRole())
-                        .build();
-            } catch (Exception e) {
-                throw new UsernameNotFoundException("Error loading user: " + username, e);
+            User user = userService.getUserByEmail(username);
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found: " + username);
             }
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(user.getEmail())
+                    .password(user.getPassword())
+                    .roles(user.getRole().toUpperCase()) // Ensure ROLE_ADMIN
+                    .build();
         };
     }
 
     @Bean
-    public AdminAuthFilter customAdminAuthFilter() {
+    public AdminAuthFilter adminAuthFilter() {
         return new AdminAuthFilter(userService);
     }
 }

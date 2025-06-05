@@ -24,7 +24,11 @@ public class AuthController {
 
         // Handle error or logout messages from Spring Security
         if (error != null) {
-            model.addAttribute("error", "Email hoặc mật khẩu không đúng");
+            if ("unauthorized".equals(error)) {
+                model.addAttribute("error", "Có ai đó đã thay đổi dữ liệu tài khoản của bạn. Vui lòng đăng nhập lại");
+            } else {
+                model.addAttribute("error", "Email hoặc mật khẩu không đúng");
+            }
         }
         if (logout != null) {
             model.addAttribute("message", "Đăng xuất thành công");
