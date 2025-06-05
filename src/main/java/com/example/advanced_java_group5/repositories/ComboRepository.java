@@ -22,4 +22,13 @@ public interface ComboRepository extends JpaRepository<Combo, Long> {
     // Lấy combo available
     @Query("SELECT c FROM Combo c WHERE c.status = 'available' ORDER BY c.price ASC")
     Page<Combo> findAvailableCombos(Pageable pageable);
+
+    @Query("SELECT COUNT(c) FROM Combo c WHERE c.status = :status")
+    long countByStatus(@Param("status") String status);
+
+    @Query("SELECT COUNT(c) FROM Combo c WHERE c.name LIKE %:keyword%")
+    long countByNameContaining(@Param("keyword") String keyword);
+
+    @Query("SELECT COUNT(c) FROM Combo c WHERE c.name LIKE %:keyword% AND c.status = :status")
+    long countByNameContainingAndStatus(@Param("keyword") String keyword, @Param("status") String status);
 }
