@@ -19,6 +19,7 @@ import org.springframework.security.web.session.SessionManagementFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private AuthService authService;
     private UserService userService;
 
     @Bean
