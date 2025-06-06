@@ -72,7 +72,7 @@ pageEncoding="UTF-8" %>
           <nav class="sb-sidenav-menu-nested nav">
             <a
               class="nav-link"
-              href="${pageContext.request.contextPath}/admin/tables"
+              href="${pageContext.request.contextPath}/admin/tables/add"
               >Danh sách bàn ăn</a
             >
             <a
